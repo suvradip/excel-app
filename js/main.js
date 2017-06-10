@@ -552,7 +552,54 @@
 
     };
 
-    
+    /**
+     * convert all the table data into CSV format
+     */
+    proto.exportTableToCSV = function(filename) {
+        var csv = [];
+        var rows = document.querySelectorAll("table tr");
+        
+        for (var i = 0; i < rows.length; i++) {
+            var row = [],
+                cols = rows[i].querySelectorAll("td, th");
+            
+            for (var j = 1; j < cols.length; j++) 
+                row.push(cols[j].innerText);
+            
+            csv.push(row.join(","));        
+        }
+
+        // Download CSV file
+        console.log(csv.join("\n"));
+        this.downLoadFile(csv.join("\n"));
+
+    };
+
+    proto.exportTableToJSON = function() {
+        var json = {},
+            dataObj = {},
+            rows = document.querySelectorAll("table tr"),
+            colHeading = rows[0].querySelectorAll("td, th");
+        
+        for (var i = 1; i < rows.length; i++) {
+            var row = [],
+                cols = rows[i].querySelectorAll("td, th");
+            
+            dataObj = {};
+            for (var j = 1; j < cols.length; j++) {
+                dataObj[colHeading[j].innerText] = cols[j].innerText;
+            }
+            json[i] = dataObj;
+        }
+
+        // Download JSON file
+        console.log(JSON.stringify(json, null, 4));
+        this.downLoadFile(json);
+    };
+
+    proto.downLoadFile = function() {
+       //ToDO
+    };
 
 
     //initialize the excel app
@@ -570,19 +617,16 @@
     dom.get(".btn.bold").on("click", function(e){
         e.preventDefault();
         document.execCommand('bold');
-        console.log("bold");
     });
 
     dom.get(".btn.italic").on("click", function(e){
         e.preventDefault();
         document.execCommand('italic');
-        console.log("italic");
     });
 
     dom.get(".btn.underline").on("click", function(e){
         e.preventDefault();
         document.execCommand('underline');
-        console.log("underline");
     });
 
     dom.get(".btn.rows").on("click", function(e){
@@ -593,6 +637,16 @@
     dom.get(".btn.columns").on("click", function(e){
         e.preventDefault();
         ecl.addCol();
+    });
+
+    dom.get(".btn.download-json").on("click", function(e){
+        e.preventDefault();
+         ecl.exportTableToJSON();
+    });
+
+    dom.get(".btn.download-csv").on("click", function(e){
+        e.preventDefault();
+        ecl.exportTableToCSV();
     });
 })();
 
