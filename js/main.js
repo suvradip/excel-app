@@ -1,26 +1,7 @@
-// var ele = document.getElementById("test");
-// var container = document.getElementById("container");
-// var cell = document.getElementById("tresize");
 
-
-// ele.addEventListener("mousedown", function( event ) {
-//     console.log(event);
-
-//     function handler(event){
-//         console.log(event);
-//         cell.style.width = (event.x - 38) + "px";
-//         ele.style.left = (event.x - 4)+ "px";         
-//     }
-
-//     container.addEventListener("mousemove", handler);
-
-//     container.addEventListener("mouseup", function(){
-//         console.log("saa");
-//         container.removeEventListener("mousemove", handler);
-//     }); 
-
-// });
-
+/**
+ * few methods to do dom operation
+ */
 (function(factory){
     window.dom = factory();
 })(function(){
@@ -271,10 +252,19 @@
 });
 
 
+/**
+ * Excel operation
+ */
 
 (function(){
     
     var proto;
+    /**
+     * Constructor fuctions, which take 3 parameters
+     * @param {*} container - the place where you want to set exel app 
+     * @param {*} row - number of rows
+     * @param {*} col - number of cols
+     */
     function Excel(container, row, col){
         this.parent = dom.get(container);
         this.table = dom.create("table");
@@ -321,10 +311,9 @@
                     td = dom.create("td");
                     td.attr("contenteditable", "true");
                     td.on("focusout", function(){
-                        console.log(this);
                         that.rowlHandler();
                         that.colHandler();                        
-                    });                    
+                    });                  
                 }
                 
                 tr.append(td);    
@@ -345,6 +334,10 @@
         return id;
     };
 
+    /**
+     * helper function which return column heading
+     * like A, b, ... AA, AB, ... ZZ
+     */
     proto.colHead = function(counts) {
         var alpha = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
         counts = counts || this.colCounts;
@@ -363,9 +356,13 @@
         }
     };
 
-
+    /**
+     * A helper function which helps to add row
+     * at the end of table
+     */
     proto.addRow = function() {
-        //TODO
+        //TODO - append row at specific location
+
         var tr = dom.create("tr"),
             id = this.init("row"),
             td,
@@ -398,7 +395,12 @@
         //TODO
     };
 
+    /**
+     * A helper function which helps to add 
+     * columns
+     */
     proto.addCol = function(tr, obj) {
+        //TODO - Add column at specific location
         var allRows = dom.get(".opt-row"),
             td,
             id,
@@ -433,9 +435,15 @@
         //TODO
     };
 
-    proto.rowlHandler = function() {
-        dom.get(".handler.row").remove();
 
+    /**
+     * To resize row, this function helps to create a handler 
+     */
+    proto.rowlHandler = function() {
+        //TODO - few bugs are present, need to solve
+
+        //remove all the existing rows handler before creating new one
+        dom.get(".handler.row").remove();
         var rows = dom.get(".opt-handler-row"),
             tableBox = this.table.bBox(),
             that = this;
@@ -448,7 +456,9 @@
 
             handler[0].style.width = tableBox.width + "px"; 
             handler[0].style.height = "5px";
-            handler[0].style.top = ele.clientHeight + ele.offsetTop + tableBox.offsetTop +  "px";
+            handler[0].style.top =  ele.clientHeight + 
+                                    ele.offsetTop + 
+                                    tableBox.offsetTop +  "px";
             handler[0].style.left = tableBox.offsetLeft + "px";
             that.parent.append(handler);
 
@@ -460,35 +470,38 @@
                     allHandlers = dom.get(".handler.row");
 
                 function helper(event){
-                    if(event.y > tableBox.offsetTop+45){
-                        fisrtTd.style.height = (event.y - 
-                                                oppTrBbox.offsetTop - 
-                                                tableBox.offsetTop) + "px";
+                    fisrtTd.style.height = (event.y - 
+                                            oppTrBbox.offsetTop - 
+                                            tableBox.offsetTop) + "px";
 
-                        allHandlers.forEach(function(ele){
-                        var _mapid = ele.getAttribute("data-mapid"),
-                                rowbBox = dom.get("#"+_mapid).bBox();
-                            ele.style.top = rowbBox.height + 
-                                            tableBox.offsetTop + 
-                                            rowbBox.offsetTop  - 3 +"px";
-                        });
-                    }
+                    allHandlers.forEach(function(ele){
+                    var _mapid = ele.getAttribute("data-mapid"),
+                            rowbBox = dom.get("#"+_mapid).bBox();
+                        ele.style.top = rowbBox.height + 
+                                        tableBox.offsetTop + 
+                                        rowbBox.offsetTop  - 3 +"px";
+                    });
                 }
 
                 that.parent.on("mousemove", helper);
 
                 that.parent.on("mouseup", function(){
                     that.parent.off("mousemove", helper);
-                    that.colHandler();                    
+                    that.colHandler();
                 }); 
 
             });
         });
     };
 
-    proto.colHandler = function() {
-        dom.get(".handler.col").remove();
 
+    /**
+     *  To resize column, this function helps to create a handler
+     */
+    proto.colHandler = function() {
+        //TODO - few bugs are present, need to solve
+
+        dom.get(".handler.col").remove();
         var cols = dom.get(".col-head"),
             tableBox = this.table.bBox(),
             that = this;
@@ -503,7 +516,8 @@
             handler[0].style.width = "4px";   
             handler[0].style.height = tableBox.height + "px";
             handler[0].style.top = tableBox.offsetTop + "px";
-            handler[0].style.left =  ele.clientWidth + ele.offsetLeft + 6 + "px";
+            handler[0].style.left = ele.clientWidth + 
+                                    ele.offsetLeft + 6 + "px";
             that.parent.append(handler);
 
             handler.on("mousedown", function( event ) {

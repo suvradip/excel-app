@@ -42,26 +42,27 @@
 
 .wrapper table {
   border-collapse: collapse;
-  border-bottom-width: 0px;
-  border-right-width: 0px; }
+  border-bottom-width: 0px; }
   .wrapper table td {
     height: 25px;
     min-height: 25px;
     width: 55px;
-    outline: none; }
+    outline: none;
+    text-align: left;
+    vertical-align: baseline;
+    font-family: "Arial Narrow";
+    font-size: 14px; }
   .wrapper table tr:first-child td {
-    width: 55px;
     height: 20px;
     text-align: center;
-    font-family: "Arial Narrow";
+    vertical-align: middle;
     font-size: 14px;
     background-color: #EEEEEE; }
   .wrapper table tr td:first-child {
     width: 25px;
     height: 20px;
     text-align: center;
-    font-family: "Arial Narrow";
-    font-size: 14px;
+    vertical-align: middle;
     background-color: #EEEEEE; }
   .wrapper table tr td:last-child {
     border-right-width: 0px; }
