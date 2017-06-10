@@ -1,25 +1,25 @@
-var ele = document.getElementById("test");
-var container = document.getElementById("container");
-var cell = document.getElementById("tresize");
+// var ele = document.getElementById("test");
+// var container = document.getElementById("container");
+// var cell = document.getElementById("tresize");
 
 
-ele.addEventListener("mousedown", function( event ) {
-    console.log(event);
+// ele.addEventListener("mousedown", function( event ) {
+//     console.log(event);
 
-    function handler(event){
-        console.log(event);
-        cell.style.width = (event.x - 38) + "px";
-        ele.style.left = (event.x - 4)+ "px";         
-    }
+//     function handler(event){
+//         console.log(event);
+//         cell.style.width = (event.x - 38) + "px";
+//         ele.style.left = (event.x - 4)+ "px";         
+//     }
 
-    container.addEventListener("mousemove", handler);
+//     container.addEventListener("mousemove", handler);
 
-    container.addEventListener("mouseup", function(){
-        console.log("saa");
-        container.removeEventListener("mousemove", handler);
-    }); 
+//     container.addEventListener("mouseup", function(){
+//         console.log("saa");
+//         container.removeEventListener("mousemove", handler);
+//     }); 
 
-});
+// });
 
 (function(factory){
     window.dom = factory();
@@ -279,18 +279,30 @@ ele.addEventListener("mousedown", function( event ) {
         this.parent = dom.get(container);
         this.table = dom.create("table");
         this.table.attr("border", 1);
+        this.table.attr("contenteditable", 1);
         this.parent.append(this.table);
         this.counter = 0;
         this.rowCounts = 0;
         this.colCounts = col;
         this.storage = {};
 
-        //console.log(this.table.bBox());
         for(var i=0; i<row; i++) {
-            var tr = this.addRow(),
+            var tr,
                 td,
-                id;
-            //this.addCol(tr, i);
+                id,
+                that = this;
+            
+            tr = dom.create("tr"),
+            id = this.init("row");
+            tr.addClass("opt-row");
+
+            if(i>0)
+                tr.addClass("opt-handler-row");
+                
+            tr.attr("id", id);
+            this.rowCounts ++;
+            this.table.append(tr);
+        
             for(var k=0; k<col; k++) {
                 if(i === 0 && k !== 0){
                     td = dom.create("td");
@@ -307,13 +319,19 @@ ele.addEventListener("mousedown", function( event ) {
                     td.text(i);
                 } else {
                     td = dom.create("td");
-                    
+                    td.attr("contenteditable", "true");
+                    td.on("focusout", function(){
+                        console.log(this);
+                        that.rowlHandler();
+                        that.colHandler();                        
+                    });                    
                 }
                 
                 tr.append(td);    
             }
         }
 
+        this.rowlHandler()
         this.colHandler();
     }
 
@@ -346,28 +364,33 @@ ele.addEventListener("mousedown", function( event ) {
     };
 
 
-    proto.addRow = function(isAppend = true, row) {
+    proto.addRow = function() {
         //TODO
         var tr = dom.create("tr"),
-            id = this.init("row");
+            id = this.init("row"),
+            td,
+            that = this;
 
         tr.attr("id", id);
-        tr.addClass("new-rows");
-        this.storage[id] = tr;
-        this.rowCounts ++;
+        tr.addClass("opt-row opt-handler-row");
         
-        if(isAppend)
-            this.table.append(tr);
-        else
-            this.table.prepend(tr, row);
+        
+        this.table.append(tr);
 
-        // for(var k=0; k<this.colCounts; k++) {
-        //     tr.append(dom.create("td"));
-        // }
+        for(var k=0; k<this.colCounts; k++) {
+            td = dom.create("td");
+            if(k === 0)
+                td.text(this.rowCounts);
 
-        //console.log(this.table.bBox());
-        if(this.rowCounts > 1)
-            this.rowlHandler( id, tr.bBox().width, tr.bBox().offsetTop, tr.bBox().offsetLeft);
+            td.attr("contenteditable", "true");
+            td.on("focusout", function(){
+                that.rowlHandler();
+                that.colHandler();                        
+            });     
+            tr.append(td);
+        }
+
+        this.rowCounts ++;
         return tr;    
     };
 
@@ -376,8 +399,7 @@ ele.addEventListener("mousedown", function( event ) {
     };
 
     proto.addCol = function(tr, obj) {
-        //TODO
-        var allRows = dom.get(".new-rows"),
+        var allRows = dom.get(".opt-row"),
             td,
             id,
             isColHead = true,
@@ -391,12 +413,19 @@ ele.addEventListener("mousedown", function( event ) {
                 td.addClass("col-head");
                 id = that.init("col");
                 td.attr("id", id);
+            } else {
+                td.attr("contenteditable", "true");
+                td.on("focusout", function(){
+                    that.rowlHandler();
+                    that.colHandler();                        
+                }); 
             }
             isColHead = false;
             var xx =  dom.get(ele);
             xx.append(td);  
         });
 
+        this.rowlHandler();
         this.colHandler();
     };
 
@@ -404,67 +433,66 @@ ele.addEventListener("mousedown", function( event ) {
         //TODO
     };
 
-    proto.rowlHandler = function(mapid, w, t, l) {
-        //TODO
-        var handler = dom.create("div"),
+    proto.rowlHandler = function() {
+        dom.get(".handler.row").remove();
+
+        var rows = dom.get(".opt-handler-row"),
             tableBox = this.table.bBox(),
             that = this;
 
-        handler.addClass("handler");
-        handler.attr("data-mapid", mapid);
-        handler.addClass("row");                     
+        rows.forEach(function(ele){
+            var handler = dom.create("div");
 
-        handler[0].style.width = w - 28 + "px";   
-        handler[0].style.height = "5px";
-        handler[0].style.top = tableBox.offsetTop + 23 + t + 2 + "px";
-        handler[0].style.left = tableBox.offsetLeft + l + 28 + "px";
-        that.parent.append(handler);
+            handler.addClass("handler row");
+            handler.attr("data-mapid", ele.id);
 
-        handler.on("mousedown", function( event ) {
-            var mapid = this.getAttribute("data-mapid"),
-                oppTr = that.storage[mapid],
-                fisrtTd = oppTr[0].firstChild,
-                oppTrBbox = oppTr.bBox(),
-                allHandlers = dom.get(".handler.row");
+            handler[0].style.width = tableBox.width + "px"; 
+            handler[0].style.height = "5px";
+            handler[0].style.top = ele.clientHeight + ele.offsetTop + tableBox.offsetTop +  "px";
+            handler[0].style.left = tableBox.offsetLeft + "px";
+            that.parent.append(handler);
 
-            function helper(event){
-                if(event.y > tableBox.offsetTop+45){
-                    fisrtTd.style.height = (event.y - 
-                                            oppTrBbox.offsetTop - 
-                                            tableBox.offsetTop) + "px";
+            handler.on("mousedown", function( event ) {
+                var mapid = this.getAttribute("data-mapid"),
+                    oppTr = dom.get("#"+mapid),
+                    fisrtTd = oppTr[0].firstChild,
+                    oppTrBbox = oppTr.bBox(),
+                    allHandlers = dom.get(".handler.row");
 
-                    allHandlers.forEach(function(ele){
-                       var _mapid = ele.getAttribute("data-mapid"),
-                            rowbBox = that.storage[_mapid].bBox();
-                        ele.style.top = rowbBox.height + 
-                                        tableBox.offsetTop + 
-                                        rowbBox.offsetTop  - 3 +"px";
-                    });
+                function helper(event){
+                    if(event.y > tableBox.offsetTop+45){
+                        fisrtTd.style.height = (event.y - 
+                                                oppTrBbox.offsetTop - 
+                                                tableBox.offsetTop) + "px";
+
+                        allHandlers.forEach(function(ele){
+                        var _mapid = ele.getAttribute("data-mapid"),
+                                rowbBox = dom.get("#"+_mapid).bBox();
+                            ele.style.top = rowbBox.height + 
+                                            tableBox.offsetTop + 
+                                            rowbBox.offsetTop  - 3 +"px";
+                        });
+                    }
                 }
-            }
 
-            that.parent.on("mousemove", helper);
+                that.parent.on("mousemove", helper);
 
-            that.parent.on("mouseup", function(){
-                that.parent.off("mousemove", helper);
-            }); 
+                that.parent.on("mouseup", function(){
+                    that.parent.off("mousemove", helper);
+                    that.colHandler();                    
+                }); 
 
+            });
         });
     };
 
     proto.colHandler = function() {
-        //TODO
-        var oldCols = dom.get(".handler.col");
-        oldCols.forEach(function(ele){
-            ele.remove();
-        });
+        dom.get(".handler.col").remove();
 
         var cols = dom.get(".col-head"),
             tableBox = this.table.bBox(),
             that = this;
         
-        console.log(cols);
-
         cols.forEach(function(ele){
             //removing exisiting col handlers
             var handler = dom.create("div");
@@ -502,6 +530,7 @@ ele.addEventListener("mousedown", function( event ) {
 
                 that.parent.on("mouseup", function(){
                     that.parent.off("mousemove", helper);
+                    that.rowlHandler();
                 }); 
 
             });
@@ -511,10 +540,9 @@ ele.addEventListener("mousedown", function( event ) {
 
     var ecl = new Excel(".wrapper", 5,5);    
 
-    //ecl.addRow(); //1
-    // ecl.addRow(); //2
-    // ecl.addRow(false); //3
-    // ecl.addRow(false, "row-2"); //4
+    ecl.addCol();
+    ecl.addCol();
+    ecl.addRow();
     ecl.addCol();
 })();
 

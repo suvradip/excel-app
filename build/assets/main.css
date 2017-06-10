@@ -47,7 +47,8 @@
   .wrapper table td {
     height: 25px;
     min-height: 25px;
-    width: 55px; }
+    width: 55px;
+    outline: none; }
   .wrapper table tr:first-child td {
     width: 55px;
     height: 20px;
@@ -74,8 +75,6 @@
 .wrapper .handler {
   position: absolute; }
   .wrapper .handler.row {
-    cursor: row-resize;
-    border: 1px solid red; }
+    cursor: row-resize; }
   .wrapper .handler.col {
-    cursor: col-resize;
-    border: 1px solid blue; }
+    cursor: col-resize; }

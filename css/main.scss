@@ -61,6 +61,7 @@
             height: 25px;
             min-height: 25px;
             width: 55px;
+            outline: none;
         }
 
         tr:first-child {
@@ -103,11 +104,11 @@
         
         &.row{
             cursor: row-resize;
-            border: 1px solid red;
+            //border: 1px solid red;
         }
         &.col {
             cursor: col-resize;
-            border: 1px solid blue;            
+            //border: 1px solid blue;            
         }
     }
 }
