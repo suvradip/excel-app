@@ -1,0 +1,81 @@
+.ExcelTableFormationCol {
+  width: 55px;
+  height: 20px;
+  text-align: center;
+  font-family: Arial Narrow;
+  font-size: 14px; }
+
+.ExcelTableFormationRow {
+  background-color: #EEEEEE;
+  text-align: center;
+  font-family: Calibri;
+  font-size: 16px;
+  height: 20px; }
+
+#LastRow td {
+  border-bottom-width: 0px; }
+
+.LastCol {
+  border-right-width: 0px; }
+
+#ExcelCursorOuter {
+  position: relative; }
+
+#ExcelCursor {
+  position: absolute;
+  top: 8px;
+  right: -5px;
+  background: #000;
+  width: 5px;
+  height: 5px;
+  border: 1px solid #fff;
+  border-right: 0px;
+  border-bottom: 0px; }
+
+.test {
+  position: absolute;
+  width: 7px;
+  height: 114px;
+  top: 8px;
+  left: 90px;
+  cursor: col-resize; }
+
+.wrapper table {
+  border-collapse: collapse;
+  border-bottom-width: 0px;
+  border-right-width: 0px; }
+  .wrapper table td {
+    height: 25px;
+    min-height: 25px;
+    width: 55px; }
+  .wrapper table tr:first-child td {
+    width: 55px;
+    height: 20px;
+    text-align: center;
+    font-family: "Arial Narrow";
+    font-size: 14px;
+    background-color: #EEEEEE; }
+  .wrapper table tr td:first-child {
+    width: 25px;
+    height: 20px;
+    text-align: center;
+    font-family: "Arial Narrow";
+    font-size: 14px;
+    background-color: #EEEEEE; }
+  .wrapper table tr td:last-child {
+    border-right-width: 0px; }
+
+.wrapper .cross-highlight {
+  background-color: Gold; }
+
+.wrapper .selected {
+  border: 3px solid black; }
+
+.wrapper .handler {
+  position: absolute; }
+  .wrapper .handler.row {
+    cursor: row-resize;
+    border: 1px solid red; }
+  .wrapper .handler.col {
+    cursor: col-resize;
+    border: 1px solid blue; }
