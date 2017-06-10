@@ -116,3 +116,47 @@
         }
     }
 }
+
+.operation-icons {
+    position: absolute;
+    margin-top: 10px; 
+    border: 1px solid;
+    font-size: 14px;
+    padding: 5px 10px;
+    background: #f0f0f0;
+    div {
+        display: inline-block;
+    }
+
+    a {
+        color: #333;
+        padding: 5px 10px;
+    }
+
+    a:hover {
+        border: 1px solid;
+        cursor: pointer;        
+    }
+
+    .editor {
+        //border: 1px solid;
+        padding: 10px 5px;
+        width: 110px;
+    }
+
+    .table {
+        //border: 1px solid;
+        padding: 10px 5px;
+        width: 78px;
+    }
+
+    .separator {
+        padding: 0 3px;
+        a {
+            border: none;
+            border-left: 1px solid;
+            padding: 5px 0;
+        }
+        
+    }
+}

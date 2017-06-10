@@ -21,7 +21,11 @@ gulp.task("cssCompiler", function() {
 
 //for frontend template and css refresh
 gulp.task( "browserSync", function() {
-	browserSync.init(["./build/assets/*.css",  "./build/assets/*.js"], {
+	browserSync.init([ 
+            //"./build/assets/*.css",
+            //"./build/assets/*.js",
+            "./build/**/*"
+        ], {
         proxy: "localhost:8080"
   	});	
 });

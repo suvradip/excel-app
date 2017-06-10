@@ -531,10 +531,42 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         });
     };
 
+    //initialize the excel app
     var ecl = new Excel(".wrapper", 5, 5);
 
     ecl.addCol();
     ecl.addCol();
     ecl.addRow();
     ecl.addCol();
+
+    /**
+     * button actions
+     */
+    dom.get(".btn.bold").on("click", function (e) {
+        e.preventDefault();
+        document.execCommand('bold');
+        console.log("bold");
+    });
+
+    dom.get(".btn.italic").on("click", function (e) {
+        e.preventDefault();
+        document.execCommand('italic');
+        console.log("italic");
+    });
+
+    dom.get(".btn.underline").on("click", function (e) {
+        e.preventDefault();
+        document.execCommand('underline');
+        console.log("underline");
+    });
+
+    dom.get(".btn.rows").on("click", function (e) {
+        e.preventDefault();
+        ecl.addRow();
+    });
+
+    dom.get(".btn.columns").on("click", function (e) {
+        e.preventDefault();
+        ecl.addCol();
+    });
 })();
