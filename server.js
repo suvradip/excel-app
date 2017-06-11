@@ -65,4 +65,4 @@ setInterval(function(){
         
         Log("SUCCESS", "all exported files cleared from exported-files folder");
     });
-}, 1000 * 600 * 60);
+}, 1000 * 60 * 60);
