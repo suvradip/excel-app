@@ -15,7 +15,7 @@ gulp.task('babel', function() {
 gulp.task("cssCompiler", function() {
   return gulp.src("./css/*.scss")
     .pipe(sass()) // Using gulp-sass
-    .pipe(gulp.dest("./build/assets/"));
+    .pipe(gulp.dest("./build/assets/css/"));
 });
 
 

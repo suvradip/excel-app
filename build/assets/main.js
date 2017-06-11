@@ -122,6 +122,18 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         });
     };
 
+    Dome.prototype.hasClass = function (cls) {
+        var i,
+            classes = this[0].className.split(" ");
+        cls = cls.trim();
+        for (i = 0; i < classes.length; i++) {
+            if (classes[i] == cls) {
+                return true;
+            }
+        }
+        return false;
+    };
+
     Dome.prototype.removeClass = function (clazz) {
         return this.forEach(function (el) {
             var cs = el.className.split(" "),
@@ -303,17 +315,23 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
                     td = dom.create("td");
                     td.text(this.colHead(k));
                     td.addClass("col-head");
+                    td.attr("data-col", k);
                     id = this.init("col");
                     td.attr("id", id);
+                    td.on("click", this.addColSelect);
                 } else if (i === 0 && k === 0) {
                     td = dom.create("td");
                     td.text("");
                 } else if (i !== 0 && k === 0) {
                     td = dom.create("td");
                     td.text(i);
+                    td.addClass("row-number");
+                    td.attr("data-rowNumber", id);
+                    td.on("click", this.addRowSelect);
                 } else {
                     td = dom.create("td");
                     td.attr("contenteditable", "true");
+                    td.attr("data-col", k);
 
                     if (this.storage && this.storage[i] && this.storage[i][k - 1] && this.storage[i][k - 1] != "") {
                         td.text(this.storage[i][k - 1]);
@@ -385,13 +403,21 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         for (var k = 0; k < this.colCounts; k++) {
             td = dom.create("td");
-            if (k === 0) td.text(this.rowCounts);
+            if (k === 0) {
+                td.text(this.rowCounts);
+                td.addClass("row-number");
+                td.attr("data-rowNumber", id);
+                td.on("click", this.addRowSelect);
+            } else {
+                td.attr("contenteditable", "true");
+                td.on("focusout", function () {
+                    that.rowlHandler();
+                    that.colHandler();
+                    //saving data at localstorage
+                    that.saveExcelData(that.exportTableToCSV());
+                });
+            }
 
-            td.attr("contenteditable", "true");
-            td.on("focusout", function () {
-                that.rowlHandler();
-                that.colHandler();
-            });
             tr.append(td);
         }
 
@@ -401,6 +427,32 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
     proto.removeRow = function () {
         //TODO
+        var count = 1;
+        if (dom.get(".delete-row").length > 0) {
+            this.rowCounts -= dom.get(".delete-row").length;
+            dom.get(".delete-row").remove();
+            this.rowlHandler();
+            this.colHandler();
+            dom.get(".row-number").forEach(function (ele) {
+                ele.innerText = count++;
+            });
+
+            //saving data at localstorage
+            this.saveExcelData(this.exportTableToCSV());
+        }
+    };
+
+    proto.addRowSelect = function (ele) {
+        var _ele = dom.get(this),
+            _rowId = _ele.attr("data-rowNumber");
+
+        if (_ele.hasClass("row-select")) {
+            dom.get("#" + _rowId + " td").removeClass("row-select");
+            dom.get(this.parentNode).removeClass("delete-row");
+        } else {
+            dom.get("#" + _rowId + " td").addClass("row-select");
+            dom.get(this.parentNode).addClass("delete-row");
+        }
     };
 
     /**
@@ -418,28 +470,59 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         allRows.forEach(function (ele) {
             td = dom.create("td");
             if (isColHead) {
-                td.text(that.colHead(that.colCounts++));
+                td.text(that.colHead(that.colCounts));
                 td.addClass("col-head");
                 id = that.init("col");
+                td.attr("data-col", that.colCounts);
                 td.attr("id", id);
+                td.on("click", that.addColSelect);
             } else {
                 td.attr("contenteditable", "true");
+                td.attr("data-col", that.colCounts);
                 td.on("focusout", function () {
                     that.rowlHandler();
                     that.colHandler();
+                    //saving data at localstorage
+                    that.saveExcelData(that.exportTableToCSV());
                 });
             }
             isColHead = false;
-            var xx = dom.get(ele);
-            xx.append(td);
+            dom.get(ele).append(td);
         });
 
+        that.colCounts++;
         this.rowlHandler();
         this.colHandler();
     };
 
     proto.removeCol = function () {
         //TODO
+        var count = 1,
+            that = this;
+        if (dom.get(".delete-col").length > 0) {
+            this.colCounts -= dom.get(".delete-col").length;
+            dom.get(".col-select").remove();
+            this.rowlHandler();
+            this.colHandler();
+            dom.get(".col-head").forEach(function (ele) {
+                ele.innerText = that.colHead(count++);
+            });
+            //saving data at localstorage
+            that.saveExcelData(that.exportTableToCSV());
+        }
+    };
+
+    proto.addColSelect = function (ele) {
+        var _ele = dom.get(this),
+            _colId = _ele.attr("data-col");
+
+        if (_ele.hasClass("col-select")) {
+            dom.get(this).removeClass("delete-col");
+            dom.get("[data-col=\"" + _colId + "\"]").removeClass("col-select");
+        } else {
+            dom.get(this).addClass("delete-col");
+            dom.get("[data-col=\"" + _colId + "\"]").addClass("col-select");
+        }
     };
 
     /**
@@ -605,7 +688,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
     };
 
     proto.loadExcelData = function () {
-        if (window.localStorage && localStorage.excelData && typeof localStorage.excelData !== "undefined" && typeof localStorage.gridFormat !== "undefined") {
+        if (window.localStorage && localStorage.excelData && localStorage.gridFormat && typeof localStorage.excelData !== "undefined" && typeof localStorage.gridFormat !== "undefined") {
             var getData = {
                 data: JSON.parse(localStorage.excelData),
                 format: JSON.parse(localStorage.gridFormat)
@@ -664,6 +747,16 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
     dom.get(".btn.columns").on("click", function (e) {
         e.preventDefault();
         ecl.addCol();
+    });
+
+    dom.get(".btn.delete-column-btn").on("click", function (e) {
+        e.preventDefault();
+        ecl.removeCol();
+    });
+
+    dom.get(".btn.delete-row-btn").on("click", function (e) {
+        e.preventDefault();
+        ecl.removeRow();
     });
 
     dom.get(".btn.download-json").on("click", function (e) {
