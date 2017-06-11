@@ -722,7 +722,7 @@
 
             }
         };
-        xhttp.open("POST", "http://localhost:3300/download/", true);
+        xhttp.open("POST", window.location.origin + "/download/", true);
         xhttp.setRequestHeader("Content-type", "application/json");
         xhttp.send(JSON.stringify({data: _data, type: _type}));
         
