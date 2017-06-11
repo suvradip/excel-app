@@ -673,9 +673,7 @@
             csv.push(row.join(","));        
         }
 
-        // Download CSV file
         csv = csv.join("\n");
-        //console.log(csv);
         return csv;
     };
 
@@ -702,15 +700,32 @@
 
         // Download JSON file
         console.log(JSON.stringify(json, null, 4));
-        this.downLoadFile(json);
+        this.downLoadFile(json, ".json");
+        //return json;
     };
 
     /**
      * helper function to help to download file
      *  by sendinf a request to a backend server.
      */
-    proto.downLoadFile = function() {
+    proto.downLoadFile = function(_data, _type) {
        //ToDO
+        var xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function() {
+            if (this.readyState == 4 && this.status == 200) {
+                var a = dom.create("a");
+                a.attr("download", "export");
+                a.attr("href", this.responseText);
+                console.log(a);
+                a[0].click();
+                //document.getElementById("demo").innerHTML = this.responseText;
+
+            }
+        };
+        xhttp.open("POST", "http://localhost:3300/download/", true);
+        xhttp.setRequestHeader("Content-type", "application/json");
+        xhttp.send(JSON.stringify({data: _data, type: _type}));
+        
     };
 
 
@@ -752,7 +767,7 @@
     
 
     //initialize the excel app
-    var ecl = new Excel(".wrapper", 5,5);    
+    var ecl = new Excel(".wrapper", 5,8);    
 
     /**
      * button actions
@@ -799,7 +814,7 @@
 
     dom.get(".btn.download-csv").on("click", function(e){
         e.preventDefault();
-        ecl.exportTableToCSV();
+        ecl.downLoadFile(ecl.exportTableToCSV(), ".csv");
     });
 })();
 

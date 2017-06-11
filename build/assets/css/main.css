@@ -1,0 +1,70 @@
+.wrapper table {
+  border-collapse: collapse;
+  border-bottom-width: 0px; }
+  .wrapper table td {
+    height: 25px;
+    min-height: 25px;
+    width: 55px;
+    outline: none;
+    text-align: left;
+    vertical-align: baseline;
+    font-family: "Arial Narrow";
+    font-size: 14px; }
+  .wrapper table .col-select {
+    background-color: #fbfbdb; }
+  .wrapper table .row-select {
+    background-color: #dcdcca; }
+  .wrapper table tr:first-child td {
+    height: 20px;
+    text-align: center;
+    vertical-align: middle;
+    font-size: 14px;
+    background-color: #EEEEEE;
+    cursor: pointer; }
+  .wrapper table tr td:first-child {
+    width: 25px;
+    height: 20px;
+    text-align: center;
+    vertical-align: middle;
+    background-color: #EEEEEE;
+    cursor: pointer; }
+  .wrapper table tr td:last-child {
+    border-right-width: 0px; }
+
+.wrapper .cross-highlight {
+  background-color: Gold; }
+
+.wrapper .selected {
+  border: 3px solid black; }
+
+.wrapper .handler {
+  position: absolute; }
+  .wrapper .handler.row {
+    cursor: row-resize; }
+  .wrapper .handler.col {
+    cursor: col-resize; }
+
+.operation-icons {
+  border: 1px solid;
+  font-size: 12px;
+  background: #f0f0f0;
+  margin-bottom: 10px;
+  position: relative;
+  display: inline-block; }
+  .operation-icons div {
+    display: inline-block; }
+  .operation-icons a {
+    color: #333;
+    padding: 5px 10px; }
+  .operation-icons a:hover {
+    border: 1px solid #ccc;
+    background-color: #f5f5f5;
+    cursor: pointer; }
+  .operation-icons .block {
+    padding: 8px 5px; }
+  .operation-icons .separator {
+    padding: 0 3px; }
+    .operation-icons .separator a {
+      border: none;
+      border-left: 1px solid;
+      padding: 5px 0; }

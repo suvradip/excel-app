@@ -75,14 +75,13 @@
 }
 
 .operation-icons {
-    //position: absolute;
-    //margin-top: 10px; 
     border: 1px solid;
-    font-size: 14px;
-    padding: 0px 10px;
+    font-size: 12px;
     background: #f0f0f0;
     margin-bottom: 10px;
-    width: 413px;
+    position: relative;
+    display: inline-block;
+
     div {
         display: inline-block;
     }
@@ -93,20 +92,13 @@
     }
 
     a:hover {
-        border: 1px solid;
-        cursor: pointer;        
+        border: 1px solid #ccc;
+        background-color: #f5f5f5;
+        cursor: pointer;       
     }
 
-    .editor {
-        //border: 1px solid;
-        padding: 10px 5px;
-        width: 110px;
-    }
-
-    .table {
-        //border: 1px solid;
-        padding: 10px 5px;
-        width: 78px;
+    .block {
+        padding:8px 5px;
     }
 
     .separator {
