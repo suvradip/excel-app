@@ -274,7 +274,8 @@
         this.counter = 0;
         this.rowCounts = 0;
         this.colCounts = col;
-        this.storage = {};
+        this.storage = this.loadExcelData();
+
 
         for(var i=0; i<row; i++) {
             var tr,
@@ -300,7 +301,6 @@
                     td.addClass("col-head");
                     id = this.init("col");
                     td.attr("id", id);
-                    this.storage[id] = td;
                 } else if(i === 0 && k === 0){
                     td = dom.create("td");
                     td.text("");
@@ -310,9 +310,19 @@
                 } else {
                     td = dom.create("td");
                     td.attr("contenteditable", "true");
+                    
+                    if(this.storage && 
+                        this.storage[i] && 
+                        this.storage[i][k-1] &&
+                        this.storage[i][k-1] != "") {
+                        td.text(this.storage[i][k-1]);
+                    }
+                    
                     td.on("focusout", function(){
                         that.rowlHandler();
-                        that.colHandler();                        
+                        that.colHandler();
+                        //saving data at localstorage
+                        that.saveExcelData(that.exportTableToCSV());                        
                     });                  
                 }
                 
@@ -556,10 +566,15 @@
      * convert all the table data into CSV format
      */
     proto.exportTableToCSV = function(filename) {
+        /**
+         * ToDO
+         * filter data or remove empty cells base on the table heading
+         * if any cell has comma, make the cell value wrapp with double quotes
+         */
         var csv = [];
         var rows = document.querySelectorAll("table tr");
         
-        for (var i = 0; i < rows.length; i++) {
+        for (var i = 1; i < rows.length; i++) {
             var row = [],
                 cols = rows[i].querySelectorAll("td, th");
             
@@ -570,18 +585,22 @@
         }
 
         // Download CSV file
-        console.log(csv.join("\n"));
-        this.downLoadFile(csv.join("\n"));
-
+        csv = csv.join("\n");
+        //console.log(csv);
+        return csv;
     };
 
     proto.exportTableToJSON = function() {
+        /**
+         * ToDO
+         * filter data or remove empty cells base on the table heading
+         */
         var json = {},
             dataObj = {},
             rows = document.querySelectorAll("table tr"),
-            colHeading = rows[0].querySelectorAll("td, th");
+            colHeading = rows[1].querySelectorAll("td, th");
         
-        for (var i = 1; i < rows.length; i++) {
+        for (var i = 2; i < rows.length; i++) {
             var row = [],
                 cols = rows[i].querySelectorAll("td, th");
             
@@ -589,7 +608,7 @@
             for (var j = 1; j < cols.length; j++) {
                 dataObj[colHeading[j].innerText] = cols[j].innerText;
             }
-            json[i] = dataObj;
+            json[i-1] = dataObj;
         }
 
         // Download JSON file
@@ -597,10 +616,46 @@
         this.downLoadFile(json);
     };
 
+    /**
+     * helper function to help to download file
+     *  by sendinf a request to a backend server.
+     */
     proto.downLoadFile = function() {
        //ToDO
     };
 
+
+    proto.loadExcelData = function() {
+        if(window.localStorage && 
+            localStorage.excelData && 
+            typeof localStorage.excelData !== "undefined") {
+                var getData = localStorage.excelData;
+                return JSON.parse(getData);
+            } else {
+            console.log("Local storage is not present.")
+            return;
+        }
+    };
+
+    proto.saveExcelData = function(csvFormatedData) {
+        if(window.localStorage) {
+            var data = csvFormatedData.split("\n"),
+                constructdata = [];
+            for(let j = 0; j<data.length; j++) {
+                constructdata[j+1] = data[j].split(",");
+            }
+
+            window.localStorage.excelData = JSON.stringify(constructdata);
+        } else {
+            console.log("Local storage is not present.")
+            return;
+        }        
+    };
+
+
+    //========/
+
+    
 
     //initialize the excel app
     var ecl = new Excel(".wrapper", 5,5);    
