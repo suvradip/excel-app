@@ -22,6 +22,8 @@ function Log() {
     });
 }
 
+app.set('port', (process.env.PORT || 3300));
+
 app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, "build")));
 app.use("/exported-files", express.static(path.join(__dirname, "exported-files")));
@@ -49,8 +51,8 @@ app.post("/download", function (req, res) {
     }); 
 });
 
-app.listen(3300, function () {
-  console.log("Example app listening on port 3000!");
+app.listen(app.get('port'), function () {
+  console.log(`Example app listening on port ${app.get('port')}`);
 });
 
 /**
