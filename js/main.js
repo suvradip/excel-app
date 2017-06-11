@@ -272,9 +272,15 @@
         this.table.attr("contenteditable", 1);
         this.parent.append(this.table);
         this.counter = 0;
+        
+        this.gridData = this.loadExcelData();
+        this.storage = this.gridData && this.gridData.data;
+        
+        row = this.gridData && this.gridData.format[0] || row;
+        col = this.gridData && this.gridData.format[1] || col;
+        
         this.rowCounts = 0;
         this.colCounts = col;
-        this.storage = this.loadExcelData();
 
 
         for(var i=0; i<row; i++) {
@@ -628,9 +634,13 @@
     proto.loadExcelData = function() {
         if(window.localStorage && 
             localStorage.excelData && 
-            typeof localStorage.excelData !== "undefined") {
-                var getData = localStorage.excelData;
-                return JSON.parse(getData);
+            typeof localStorage.excelData !== "undefined" &&
+            typeof localStorage.gridFormat !== "undefined") {
+                var getData = {
+                    data: JSON.parse(localStorage.excelData),
+                    format: JSON.parse(localStorage.gridFormat)
+                }
+                return getData;
             } else {
             console.log("Local storage is not present.")
             return;
@@ -644,7 +654,7 @@
             for(let j = 0; j<data.length; j++) {
                 constructdata[j+1] = data[j].split(",");
             }
-
+            window.localStorage.gridFormat = JSON.stringify([this.rowCounts, this.colCounts]);
             window.localStorage.excelData = JSON.stringify(constructdata);
         } else {
             console.log("Local storage is not present.")
@@ -659,12 +669,6 @@
 
     //initialize the excel app
     var ecl = new Excel(".wrapper", 5,5);    
-
-    ecl.addCol();
-    ecl.addCol();
-    ecl.addRow();
-    ecl.addCol();
-
 
     /**
      * button actions
