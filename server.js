@@ -47,7 +47,10 @@ app.post("/download", function (req, res) {
             Log("ERROR", "error on file writing");
 
         Log("SUCCESS", "Export successfull.", type, "export-"+name);
-        res.send([url, "/exported-files/export-", name].join(""));    
+        res.send({ 
+            url : [url, "/exported-files/export-", name].join(""),
+            type: type
+        });    
     }); 
 });
 

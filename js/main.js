@@ -699,7 +699,7 @@
         }
 
         // Download JSON file
-        console.log(JSON.stringify(json, null, 4));
+        //console.log(JSON.stringify(json, null, 4));
         this.downLoadFile(json, ".json");
         //return json;
     };
@@ -713,13 +713,11 @@
         var xhttp = new XMLHttpRequest();
         xhttp.onreadystatechange = function() {
             if (this.readyState == 4 && this.status == 200) {
-                var a = dom.create("a");
-                a.attr("download", "export");
-                a.attr("href", this.responseText);
-                console.log(a);
+                var a = dom.create("a"),
+                data = JSON.parse(this.responseText);
+                a.attr("download", `export${data.type}`);
+                a.attr("href", data.url);
                 a[0].click();
-                //document.getElementById("demo").innerHTML = this.responseText;
-
             }
         };
         xhttp.open("POST", window.location.origin + "/download/", true);
