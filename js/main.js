@@ -693,7 +693,12 @@
             
             dataObj = {};
             for (var j = 1; j < cols.length; j++) {
-                dataObj[colHeading[j].innerText] = cols[j].innerText;
+                if(colHeading[j].innerText !== "") {
+                    dataObj[colHeading[j].innerText] = cols[j].innerText;
+                    
+                } else if(colHeading[j].innerText === ""){
+                    dataObj[this.colHead(j)] = cols[j].innerText;
+                }
             }
             json[i-1] = dataObj;
         }
@@ -701,7 +706,6 @@
         // Download JSON file
         //console.log(JSON.stringify(json, null, 4));
         this.downLoadFile(json, ".json");
-        //return json;
     };
 
     /**
@@ -717,7 +721,9 @@
                 data = JSON.parse(this.responseText);
                 a.attr("download", `export${data.type}`);
                 a.attr("href", data.url);
+                dom.get("body").append(a);
                 a[0].click();
+                a.remove();
             }
         };
         xhttp.open("POST", window.location.origin + "/download/", true);
