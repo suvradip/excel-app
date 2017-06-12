@@ -410,6 +410,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
                 td.on("click", this.addRowSelect);
             } else {
                 td.attr("contenteditable", "true");
+                td.attr("data-col", k);
                 td.on("focusout", function () {
                     that.rowlHandler();
                     that.colHandler();
@@ -784,5 +785,30 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
     dom.get(".btn.download-csv").on("click", function (e) {
         e.preventDefault();
         ecl.downLoadFile(ecl.exportTableToCSV(), ".csv");
+    });
+
+    //tooltip position calculation
+    dom.get(".btn").on("mouseenter", function (event) {
+        var ele = dom.get(this),
+            eleBbox = dom.get(this).bBox(),
+            tooltip = dom.get(".tooltip"),
+            btnContainer = dom.get(".operation-icons").bBox(),
+            msg = ele.attr("data-tooltip"),
+            tooltipBbox;
+
+        if (typeof msg === "undefined" || msg === null) return;
+
+        console.log(this, eleBbox);
+        dom.get(".tooltip span").text(msg);
+        tooltip[0].style.display = "block";
+        tooltipBbox = tooltip.bBox();
+        tooltip[0].style.top = eleBbox.offsetTop + btnContainer.height - 3 + "px";
+        tooltip[0].style.left = eleBbox.offsetLeft + eleBbox.width / 2 + 5 - tooltipBbox.width / 2 + "px";
+    });
+
+    //tooltip position calculation
+    dom.get(".btn").on("mouseleave", function (event) {
+        var tooltip = dom.get(".tooltip");
+        tooltip[0].style.display = "none";
     });
 })();
