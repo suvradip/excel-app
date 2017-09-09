@@ -1,7 +1,7 @@
 # Excel-App
 ##### Design and develop simple excel sheet application using HTML, CSS and JavaScript
  
- I have completed this features which are supported now these are listed  bellow,
+ I have completed this features which are supported
 - Add/remove rows and/or columns
 - Resizing rows and/or columns
 - Text manipulation in cell - bold, italic and underline using keyboard shortcuts
